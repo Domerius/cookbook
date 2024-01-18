@@ -23,6 +23,11 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+        
+      - name: Activate virtualenv
+        run: |
+          . .venv/bin/activate
+          echo PATH=$PATH >> $GITHUB_ENV
 
       - name: Set up Python
         uses: actions/setup-python@v4
