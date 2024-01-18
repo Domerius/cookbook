@@ -1,0 +1,8 @@
+[project]
+name = "cookbook"
+version = "0.03"
+authors = [
+  {name = "Dominik Salabura"}
+]
+description = "A simple project that allows keeping your cooking recipes in one place."
+readme = "README.md"
