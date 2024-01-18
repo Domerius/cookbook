@@ -1,1 +1,1 @@
-from .setup import Person
+from .run import Person
