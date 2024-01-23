@@ -1,72 +1,88 @@
 from string import punctuation, digits
+from typing import Union
 
-from difficulty import Difficulty
-from ingredient import Ingredient
+from .difficulty import Difficulty
+from .ingredient import Ingredient
 
-def compressTitle(title: str):
+def compressName(name: str) -> str:
+    """
+    Transform name of the recipe into a shortened form. Punctuation and digits are being removed from input.
+    """
+
     # Erase all punctuation and digits and seperate remaining words 
-    titleSplit = title.translate(str.maketrans('', '', punctuation + digits)).split()
-    # Join words together into the compressed title
-    if len(titleSplit) == 0:
-        # Exception: Wrong input title
-        raise()
-    elif len(titleSplit) == 1:
+    nameSplit = name.translate(str.maketrans('', '', punctuation + digits)).split()
+
+    # Join words together into the compressed name
+    if len(nameSplit) == 0:
+        # Exception: Wrong input name
+        raise TypeError(f"Wrong input name")
+    elif len(nameSplit) == 1:
         # Leave the word as it is
-        return titleSplit[0].capitalize()
+        return nameSplit[0].capitalize()
     else:
-        titleCompressed = ''
-        for word in titleSplit:
-            titleCompressed += word[0:2].capitalize()
-        return titleCompressed
+        nameCompressed = ''
+        for word in nameSplit:
+            nameCompressed += word[0:2].capitalize()
+        return nameCompressed
     
 
 class Recipe:
-    def __init__(self, title: str, ingredients: list[Ingredient], description: Union(str, list[str]), **kwargs):
-        # Assign title and its shorted version
-        if type(title) == str:
-            self.titleFull = title
-            self.__titleCompressed = compressTitle(title)
+    """
+    Contains informations about a single recipe from the cookbook.
+
+    Parameters:
+        name (str): Name of the recipe
+        ingredients (list[Ingredient]): List of needed ingeredients
+        description (str): Description mainly containing instructions for making the recipe
+        estimatedTime (int): Estimated time which is supposed to take in order to prepare the meal
+        difficulty (Difficulty): Subjective difficulty of the recipe
+        relatedLinks (str): Hiperlinks directing to related web pages
+    """
+
+    def __init__(self, name: str, ingredients: list[Ingredient], description: Union[str, list[str]], **kwargs) -> None:
+        """
+        Initialises Recipe object:
+
+        Parameters:
+            name (str): Name of the recipe
+            ingredients (list[Ingredient]): List of needed ingeredients
+            description (str): Description mainly containing instructions for making the recipe
+            **kwargs: Accepts all optional class parameters
+        """
+
+        # Assign name and its shorted version
+        if isinstance(name, str):
+            self.nameFull = name
+            self.__nameCompressed = compressName(name)
         else:
-            # Exception: Wrong type of entered title
-            raise()
+            raise TypeError(f"""Parameter 'name' has wrong type: {type(name)}.\n
+                            Should be str.""")
         
         # Assign ingredients
-        if type(ingredients) == list[Ingredient] and len(ingredients) > 1:
+        if isinstance(ingredients, list[Ingredient]) and len(ingredients) > 1:
             self.ingredients = ingredients
         else:
-            # Exception: Inputed ingredients have wrong type or the list contains of very few items
-            raise()
+            raise TypeError(f"""Parameter 'ingredients' has wrong type: {type(ingredients)} or contains too little entries: {len(ingredients)}.\n
+                            Type should be list[Ingredient] and the list is supposed to have at least 2 elements.""")
             
         # Assign description
-        if type(description) == str:
+        if isinstance(description, str):
             self.description = description
-        elif type(description) == list[str]:
+        elif isinstance(description, list[str]):
             self.description = ''.join('\n', description)
         else:
-            # Exception: Given description has wrong type
-            raise()
+            raise TypeError(f"""Parameter 'description' has wrong type: {type(name)}.\n
+                            Should be str or list[str].""")
         
         # Assign optional keyword arguments
-        keywords = ["estimatedTime", "difficulty", "relatedLinks"]
-        for keyword in keywords:
-            # TODO: Check if more optimal
-            if keyword in kwargs.keys:
-                pass
+        # TODO: Consider adding tags as atribute eg. dinner, breakfast, many days etc.
+        keywords = {"estimatedTime": int, "difficulty": Difficulty, "relatedLinks": Union[str, list[str]]}
+        for key in keywords.keys:
+            if key in kwargs.keys:
+                if isinstance(kwargs[key], keywords[key]):
+                    setattr(self, key, kwargs[key])
+                else:
+                    raise TypeError(f"Optional parameter {key} has wrong type: {type(kwargs[key])}.\nShould be {keywords[key]}.")
             else:
-                pass
-        
-        if "estimatedTime" in kwargs.keys:
-            self.estimatedTime = kwargs["estimatedTime"]
-        else:
-            self.estimatedTime = None
-            
-        if "difficulty" in kwargs.keys:
-            self.difficulty = kwargs["difficulty"]
-        else:
-            self.difficulty = None
-            
-        if "relatedLinks" in kwargs.keys:
-            self.relatedLinks = kwargs["relatedLinks"]
-        else:
-            self.relatedLinks = None
+                setattr(self, key, None)
                 
