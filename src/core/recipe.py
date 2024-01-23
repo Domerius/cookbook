@@ -1,3 +1,4 @@
+from __future__ import annotations
 from string import punctuation, digits
 from typing import Union
 
