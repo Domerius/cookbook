@@ -24,15 +24,15 @@ class Ingredient:
         if isinstance(name, str):
             self.name = name
         else:
-            raise TypeError(f"""Parameter 'name' has wrong type: {type(name)}.\n
-                            Should be str.""")
+            raise TypeError(f"Parameter 'name' has wrong type: {type(name)}. " \
+                            "Should be str.")
         
         # Assign measure
         if isinstance(measure, Number):
             self.measure = float(measure)
         else:
-            raise TypeError(f"""Parameter 'measure' has wrong type: {type(measure)}.\n
-                            Should be any number type.""")
+            raise TypeError(f"Parameter 'measure' has wrong type: {type(measure)}. " \
+                            "Should be any number type.")
         
         # Assign measurement unit
         if isinstance(unit, str):
@@ -41,8 +41,8 @@ class Ingredient:
             else:
                 self.unit = unit
         else:
-            raise TypeError(f"""Parameter 'unit' has wrong type: {type(unit)}.\n
-                            Should be str.""")
+            raise TypeError(f"Parameter 'unit' has wrong type: {type(unit)}. " \
+                            "Should be str.")
     
     def __str__(self):
         """

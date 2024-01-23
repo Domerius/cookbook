@@ -56,15 +56,15 @@ class Recipe:
             self.nameFull = name
             self.__nameCompressed = compressName(name)
         else:
-            raise TypeError(f"""Parameter 'name' has wrong type: {type(name)}.\n
-                            Should be str.""")
+            raise TypeError(f"Parameter 'name' has wrong type: {type(name)}. " \
+                            "Should be str.")
         
         # Assign ingredients
         if isinstance(ingredients, list[Ingredient]) and len(ingredients) > 1:
             self.ingredients = ingredients
         else:
-            raise TypeError(f"""Parameter 'ingredients' has wrong type: {type(ingredients)} or contains too little entries: {len(ingredients)}.\n
-                            Type should be list[Ingredient] and the list is supposed to have at least 2 elements.""")
+            raise TypeError(f"Parameter 'ingredients' has wrong type: {type(ingredients)} or contains too little entries: {len(ingredients)}. " \
+                            "Type should be list[Ingredient] and the list is supposed to have at least 2 elements.")
             
         # Assign description
         if isinstance(description, str):
@@ -72,18 +72,18 @@ class Recipe:
         elif isinstance(description, list[str]):
             self.description = ''.join('\n', description)
         else:
-            raise TypeError(f"""Parameter 'description' has wrong type: {type(name)}.\n
-                            Should be str or list[str].""")
+            raise TypeError(f"Parameter 'description' has wrong type: {type(name)}. " \
+                            "Should be str or list[str].")
         
         # Assign optional keyword arguments
-        # TODO: Consider adding tags as atribute eg. dinner, breakfast, many days etc.
         keywords = {"estimatedTime": int, "difficulty": Difficulty, "relatedLinks": Union[str, list[str]]}
         for key in keywords.keys:
             if key in kwargs.keys:
                 if isinstance(kwargs[key], keywords[key]):
                     setattr(self, key, kwargs[key])
                 else:
-                    raise TypeError(f"Optional parameter {key} has wrong type: {type(kwargs[key])}.\nShould be {keywords[key]}.")
+                    raise TypeError(f"Optional parameter {key} has wrong type: {type(kwargs[key])}. " \
+                                    f"Should be {keywords[key]}.")
             else:
                 setattr(self, key, None)
                 
