@@ -10,7 +10,7 @@ class Ingredient:
         unit (str): Measurement unit
     """
 
-    def __init__(self, name: str, measure: float, unit: str):
+    def __init__(self, name: str, measure: float, unit: str = ''):
         """
         Initialises Ingredient object:
 
@@ -22,14 +22,14 @@ class Ingredient:
 
         # Assign name
         if isinstance(name, str):
-            self.name = name
+            self.name = name.lower()
         else:
             raise TypeError(f"Parameter 'name' has wrong type: {type(name)}. " \
                             "Should be str.")
         
         # Assign measure
         if isinstance(measure, Number):
-            self.measure = float(measure)
+            self.measure = measure
         else:
             raise TypeError(f"Parameter 'measure' has wrong type: {type(measure)}. " \
                             "Should be any number type.")
@@ -39,7 +39,7 @@ class Ingredient:
             if unit == '':
                 self.unit = "pcs."  # If no unit is provided, interpret as countable pieces
             else:
-                self.unit = unit
+                self.unit = unit.lower()
         else:
             raise TypeError(f"Parameter 'unit' has wrong type: {type(unit)}. " \
                             "Should be str.")
@@ -48,10 +48,10 @@ class Ingredient:
         """
         Returns user-oriented representation of this class.
         """
-        return f"{self.measure} {self.unit} of {self.name}"
+        return f"{self.name}: {self.measure} {self.unit}"
     
     def __repr__(self):
         """
         Returns developer-oriented representation of this class
         """
-        return f"{type(self).__name__}(name='{self.name}', measure={self.measure}, unit={self.unit})"
+        return f"{type(self).__name__}(name={self.name}, measure={self.measure}, unit={self.unit})"

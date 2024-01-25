@@ -15,8 +15,7 @@ def compressName(name: str) -> str:
 
     # Join words together into the compressed name
     if len(nameSplit) == 0:
-        # Exception: Wrong input name
-        raise TypeError(f"Wrong input name")
+        raise TypeError(f"Wrong input name: {name}.")
     elif len(nameSplit) == 1:
         # Leave the word as it is
         return nameSplit[0].capitalize()
