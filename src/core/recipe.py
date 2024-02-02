@@ -1,5 +1,6 @@
 from __future__ import annotations
 from string import punctuation, digits
+from typeguard import check_type
 from typing import Union
 
 from .difficulty import Difficulty
@@ -59,7 +60,7 @@ class Recipe:
                             "Should be str.")
         
         # Assign ingredients
-        if isinstance(ingredients, list[Ingredient]) and len(ingredients) > 1:
+        if check_type(ingredients, list[Ingredient]) and len(ingredients) > 1:
             self.ingredients = ingredients
         else:
             raise TypeError(f"Parameter 'ingredients' has wrong type: {type(ingredients)} or contains too little entries: {len(ingredients)}. " \
@@ -68,17 +69,17 @@ class Recipe:
         # Assign description
         if isinstance(description, str):
             self.description = description
-        elif isinstance(description, list[str]):
-            self.description = ''.join('\n', description)
+        elif check_type(description, list[str]):
+            self.description = '\n'.join(description)
         else:
             raise TypeError(f"Parameter 'description' has wrong type: {type(name)}. " \
                             "Should be str or list[str].")
         
         # Assign optional keyword arguments
         keywords = {"estimatedTime": int, "difficulty": Difficulty, "relatedLinks": Union[str, list[str]]}
-        for key in keywords.keys:
-            if key in kwargs.keys:
-                if isinstance(kwargs[key], keywords[key]):
+        for key in keywords.keys():
+            if key in kwargs.keys():
+                if check_type(kwargs[key], keywords[key]):
                     setattr(self, key, kwargs[key])
                 else:
                     raise TypeError(f"Optional parameter {key} has wrong type: {type(kwargs[key])}. " \
