@@ -29,7 +29,11 @@ class Ingredient:
         
         # Assign measure
         if isinstance(measure, Number):
-            self.measure = measure
+            if measure > 0:
+                self.measure = measure
+            else:
+                raise ValueError(f"Parameter 'measure' has wrong value: {measure}. " \
+                                 "Should be positive.")
         else:
             raise TypeError(f"Parameter 'measure' has wrong type: {type(measure)}. " \
                             "Should be any number type.")
