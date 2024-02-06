@@ -1,3 +1,4 @@
+from __future__ import annotations
 import pytest
 from ..core import Recipe, Ingredient, Difficulty
 from typeguard import TypeCheckError

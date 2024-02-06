@@ -86,4 +86,11 @@ class Recipe:
                                     f"Should be {keywords[key]}.")
             else:
                 setattr(self, key, None)
-                
+    
+    def __str__(self):
+        return self.nameFull + "\n\n" + \
+               "Ingredients:\n\t- " + "\n\t- ".join(str(self.ingredients)) + "\n\n" + \
+               "Description:\n\t" + "\n\t".join(self.description) + "\n\n" + \
+               "Estimated time: " + str(self.estimatedTime) + "\n" + \
+               "Difficulty: " + str(self.difficulty) + "\n\n" + \
+               "Related links:\n\t" + "\n\t".join(str(self.relatedLinks))
