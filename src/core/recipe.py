@@ -1,6 +1,6 @@
 from __future__ import annotations
 from string import punctuation, digits
-from typeguard import check_type
+from typeguard import check_type, ForwardRefPolicy
 from typing import Union
 
 from .difficulty import Difficulty
@@ -88,9 +88,32 @@ class Recipe:
                 setattr(self, key, None)
     
     def __str__(self):
-        return self.nameFull + "\n\n" + \
-               "Ingredients:\n\t- " + "\n\t- ".join(str(self.ingredients)) + "\n\n" + \
-               "Description:\n\t" + "\n\t".join(self.description) + "\n\n" + \
-               "Estimated time: " + str(self.estimatedTime) + "\n" + \
-               "Difficulty: " + str(self.difficulty) + "\n\n" + \
-               "Related links:\n\t" + "\n\t".join(str(self.relatedLinks))
+        str_out = f"{self.nameFull}\n\n"    # Start string with the name of the recipe
+
+        # Print out the difficulty (if such exists)
+        if hasattr(self, "difficulty"):
+            str_out += f"Difficulty: {self.difficulty}\n\n"
+
+        # Print out the estimated time (if such exists)
+        if hasattr(self, "estimatedTime"):
+            str_out += f"Estimated time: {self.estimatedTime} min\n\n"
+        
+        # Print out the ingredients
+        str_out += "Ingredients:\n"
+        for ingredient in self.ingredients:
+            str_out += f"\t- {str(ingredient)}"
+        str_out += "\n\n"
+
+        # Print out the description
+        str_out += f"Description:\n{self.description}"
+
+        # Print out related links (if such exist)
+        if hasattr(self, "relatedLinks"):
+            if isinstance(self.relatedLinks, list):
+                str_out += "\n\nRelated links:\n"
+                for link in self.relatedLinks:
+                    str_out += f"\t-: {self.link}"
+            elif isinstance(self.relatedLinks, str):
+                str_out += f"\n\nRelated links: {self.relatedLinks}"
+
+        return str_out

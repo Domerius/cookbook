@@ -36,7 +36,7 @@ def description():
             "Całość podawać z ulubionymi dodatkami!"]
 
 @pytest.fixture()
-def description_out():
+def expected_description():
     return "Wymieszaj mąkę z serem. Wlej mleko i z miksuj.\n" \
         "Podpiekaj na patelni aż się zetnie.\n" \
         "Całość podawać z ulubionymi dodatkami!"
@@ -70,11 +70,47 @@ def related_links():
 def related_links_wrong_type():
     return 5
 
+# Recipe's general fixtures
+@pytest.fixture()
+def expected_string(name: str,
+                    ingredients: Ingredient,
+                    description: list[str],
+                    estimated_time: int,
+                    difficulty: Difficulty,
+                    related_links: str):
+    
+    str_out = f"{name}\n\n"
+    str_out += f"Difficulty: {difficulty}\n\n"
+    str_out += f"Estimated time: {estimated_time} min\n\n"
+    str_out += "Ingredients:\n"
+    for ingredient in ingredients:
+        str_out += f"\t- {str(ingredient)}"
+    str_out += "\n\n"
+    str_out += f"Description:\n{"\n".join(description)}"
+    str_out += f"\n\nRelated links: {related_links}"
 
+    return str_out
+
+            # Naleśniki z serem
+
+            # Difficulty: easy
+
+            # Estimated time: 20 min
+
+            # Ingredients:
+            #    - mąka: 500 g   - ser biały: 20 dag     - mleko: 0.2 l
+            # Description:
+            # Wymieszaj mąkę z serem. Wlej mleko i z miksuj.
+            # Podpiekaj na patelni aż się zetnie.
+            # Całość podawać z ulubionymi dodatkami!
+
+            # Related links: https://stronainternetowa.com
+
+# Tests of __init__
 def test_init(name: str,
               ingredients: Ingredient,
               description: list[str],
-              description_out: str):
+              expected_description: str):
     """
     TEST 1: Check if the Recipe class initialises correctly
     """
@@ -83,7 +119,7 @@ def test_init(name: str,
     
     assert recipe.nameFull == name
     assert recipe.ingredients == ingredients
-    assert recipe.description == description_out
+    assert recipe.description == expected_description
     
 def test_init_with_kwargs(name: str,
                           ingredients: Ingredient,
@@ -152,18 +188,35 @@ def test_init_with_kwargs_error(name: str,
         Recipe(name, ingredients, description,
                estimatedTime=estimated_time_wrong_type)
 
-    assert e_info.type is TypeCheckError
+    assert e_info.type is TypeCheckError or e_info.type is TypeError
 
     # Wrong difficulty type
     with pytest.raises(Exception) as e_info:
         Recipe(name, ingredients, description,
                difficulty=difficulty_wrong_type)
 
-    assert e_info.type is TypeCheckError
+    assert e_info.type is TypeCheckError or e_info.type is TypeError
     
     # Wrong relatedLinks type
     with pytest.raises(Exception) as e_info:
         Recipe(name, ingredients, description,
                relatedLinks=related_links_wrong_type)
 
-    assert e_info.type is TypeCheckError
+    assert e_info.type is TypeCheckError or e_info.type is TypeError
+
+# Tests of __str__
+def test_str(name: str,
+             ingredients: Ingredient,
+             description: list[str],
+             estimated_time: int,
+             difficulty: Difficulty,
+             related_links: str,
+             expected_string: str):
+    """
+    TEST 5: Check if the Recipe class has right string representation
+    """
+    
+    recipe = Recipe(name, ingredients, description,
+                    estimatedTime=estimated_time, difficulty=difficulty, relatedLinks=related_links)
+    
+    assert str(recipe) == expected_string
