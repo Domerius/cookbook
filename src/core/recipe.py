@@ -1,6 +1,5 @@
 from __future__ import annotations
 from string import punctuation, digits
-from typeguard import check_type, ForwardRefPolicy
 from typing import Union
 
 from .difficulty import Difficulty
@@ -60,7 +59,7 @@ class Recipe:
                             "Should be str.")
         
         # Assign ingredients
-        if check_type(ingredients, list[Ingredient]) and len(ingredients) > 1:
+        if isinstance(ingredients, list) and len(ingredients) > 1:
             self.ingredients = ingredients
         else:
             raise TypeError(f"Parameter 'ingredients' has wrong type: {type(ingredients)} or contains too little entries: {len(ingredients)}. " \
@@ -69,8 +68,10 @@ class Recipe:
         # Assign description
         if isinstance(description, str):
             self.description = description
-        elif check_type(description, list[str]):
-            self.description = '\n'.join(description)
+        elif isinstance(description, list):
+            self.description = ""
+            for paragraph in description:
+                self.description += f"\t{paragraph}\n"
         else:
             raise TypeError(f"Parameter 'description' has wrong type: {type(name)}. " \
                             "Should be str or list[str].")
@@ -79,8 +80,11 @@ class Recipe:
         keywords = {"estimatedTime": int, "difficulty": Difficulty, "relatedLinks": Union[str, list[str]]}
         for key in keywords.keys():
             if key in kwargs.keys():
-                if check_type(kwargs[key], keywords[key]):
+                
+                if isinstance(kwargs[key], get_args(keywords[key])):
                     setattr(self, key, kwargs[key])
+                elif type(keywords[key]) is Literal and isinstance(kwargs[key], keywords[key]):
+                    pass
                 else:
                     raise TypeError(f"Optional parameter {key} has wrong type: {type(kwargs[key])}. " \
                                     f"Should be {keywords[key]}.")
@@ -112,7 +116,7 @@ class Recipe:
             if isinstance(self.relatedLinks, list):
                 str_out += "\n\nRelated links:\n"
                 for link in self.relatedLinks:
-                    str_out += f"\t-: {self.link}"
+                    str_out += f"\t: {self.link}"
             elif isinstance(self.relatedLinks, str):
                 str_out += f"\n\nRelated links: {self.relatedLinks}"
 

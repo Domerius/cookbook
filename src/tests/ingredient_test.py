@@ -15,10 +15,6 @@ def name_capitalized():
 def name_countable():
     return "jajka"
 
-@pytest.fixture()
-def name_wrong_type():
-    return 1
-
 # Measure fixtures
 @pytest.fixture()
 def measure_uncountable():
@@ -28,14 +24,6 @@ def measure_uncountable():
 def measure_countable():
     return 5
 
-@pytest.fixture()
-def measure_wrong_type():
-    return "5"
-
-@pytest.fixture()
-def measure_wrong_value():
-    return -1
-
 # Unit fixtures
 @pytest.fixture()
 def unit_lowercase():
@@ -44,10 +32,6 @@ def unit_lowercase():
 @pytest.fixture()
 def unit_capitalized():
     return "Kg"
-
-@pytest.fixture()
-def unit_wrong_type():
-    return 9
 
 
 def test_init(name_lowercase: str,
@@ -94,36 +78,32 @@ def test_countable(name_countable: str,
     assert str(ingredient) == "jajka: 5 pcs."
 
 def test_init_error(name_lowercase: str,
-                    name_wrong_type: int,
                     measure_uncountable: int,
-                    measure_wrong_type: str,
-                    measure_wrong_value: int,
-                    unit_lowercase: str,
-                    unit_wrong_type: int):
+                    unit_lowercase: str):
     """
     TEST 5: Check if the Ingredient class handles exceptions properly
     """
     
-    # Wrong name type
+    # Wrong name type (int)
     with pytest.raises(Exception) as e_info:
-        Ingredient(name_wrong_type, measure_uncountable, unit_lowercase)
+        Ingredient(5, measure_uncountable, unit_lowercase)
 
     assert e_info.type is TypeError
 
-    # Wrong measure type
+    # Wrong measure type (str)
     with pytest.raises(Exception) as e_info:
-        Ingredient(name_lowercase, measure_wrong_type, unit_lowercase)
+        Ingredient(name_lowercase, "5", unit_lowercase)
 
     assert e_info.type is TypeError
 
-    # Wrong measure value
+    # Wrong measure value (negative int)
     with pytest.raises(Exception) as e_info:
-        Ingredient(name_lowercase, measure_wrong_value, unit_lowercase)
+        Ingredient(name_lowercase, -5, unit_lowercase)
 
     assert e_info.type is ValueError
 
-    # Wrong unit type
+    # Wrong unit type (int)
     with pytest.raises(Exception) as e_info:
-        Ingredient(name_lowercase, measure_uncountable, unit_wrong_type)
+        Ingredient(name_lowercase, measure_uncountable, 5)
 
     assert e_info.type is TypeError
