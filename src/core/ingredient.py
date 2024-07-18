@@ -19,43 +19,30 @@ class Ingredient:
             measure (float): Measure of said ingredient
             unit (str): Measurement unit
         """
-
-        # Assign name
-        if isinstance(name, str):
-            self.name = name.lower()
-        else:
+        
+        # Check if argument types are correct and make sense
+        if not isinstance(name, str):
             raise TypeError(f"Parameter 'name' has wrong type: {type(name)}. " \
                             "Should be str.")
-        
-        # Assign measure
-        if isinstance(measure, Number):
-            if measure > 0:
-                self.measure = measure
-            else:
-                raise ValueError(f"Parameter 'measure' has wrong value: {measure}. " \
-                                 "Should be positive.")
-        else:
+        if not isinstance(measure, Number):
             raise TypeError(f"Parameter 'measure' has wrong type: {type(measure)}. " \
                             "Should be any number type.")
-        
-        # Assign measurement unit
-        if isinstance(unit, str):
-            if unit == '':
-                self.unit = "pcs."  # If no unit is provided, interpret as countable pieces
-            else:
-                self.unit = unit.lower()
-        else:
+        if measure <= 0:
+            raise ValueError(f"Parameter 'measure' has wrong value: {measure}. " \
+                             "Should be positive.")
+        if not isinstance(unit, str):
             raise TypeError(f"Parameter 'unit' has wrong type: {type(unit)}. " \
                             "Should be str.")
+        
+        # Assign values
+        self.name = name.lower()
+        self.measure = measure
+        self.unit = "pcs."  if  unit == ''  else  unit.lower()
     
     def __str__(self):
-        """
-        Returns user-oriented representation of this class.
-        """
+        """ Returns user-oriented representation of this class. """
         return f"{self.name}: {self.measure} {self.unit}"
     
     def __repr__(self):
-        """
-        Returns developer-oriented representation of this class
-        """
+        """ Returns developer-oriented representation of this class. """
         return f"{type(self).__name__}(name={self.name}, measure={self.measure}, unit={self.unit})"

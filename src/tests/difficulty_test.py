@@ -41,10 +41,10 @@ def test_str():
     """
 
     outStr = str(Difficulty.EASY)
-    assert outStr == "easy"
+    assert outStr == "Easy"
 
     outStr = str(Difficulty.MEDIUM)
-    assert outStr == "medium"
+    assert outStr == "Medium"
 
     outStr = str(Difficulty.HARD)
-    assert outStr == "hard"
+    assert outStr == "Hard"

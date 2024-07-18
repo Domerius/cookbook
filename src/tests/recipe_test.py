@@ -62,7 +62,7 @@ def expected_string(name: str,
     """
     Naleśniki z serem
 
-    Difficulty: easy
+    Difficulty: Easy
 
     Estimated time: 20 min
 
@@ -72,11 +72,13 @@ def expected_string(name: str,
        - mleko: 0.2 l
        
     Description:
-    Wymieszaj mąkę z serem. Wlej mleko i z miksuj.
-    Podpiekaj na patelni aż się zetnie.
-    Całość podawać z ulubionymi dodatkami!
+        Wymieszaj mąkę z serem. Wlej mleko i z miksuj.
+        Podpiekaj na patelni aż się zetnie.
+        Całość podawać z ulubionymi dodatkami!
 
-    Related links: https://stronainternetowa.com
+    Related links:
+        https://pierwszastronainternetowa.com
+        https://drugastronainternetowa.com
     """
             
     str_out = f"{name}\n\n"
@@ -84,12 +86,12 @@ def expected_string(name: str,
     str_out += f"Estimated time: {estimated_time} min\n\n"
     str_out += "Ingredients:\n"
     for ingredient in ingredients:
-        str_out += f"\t- {str(ingredient)}"
-    str_out += "\n\n"
-    str_out += f"Description:\n{"\n".join(description)}"
-    str_out += "\n\nRelated links:\n"
+        str_out += f"\t- {str(ingredient)}\n"
+    str_out += "\n"
+    str_out += f"Description:\n\t{"\n\t".join(description)}"
+    str_out += "\n\nRelated links:"
     for link in related_links:
-        str_out += f"\t{link}\n"
+        str_out += f"\n\t{link}"
 
     return str_out
 
@@ -167,7 +169,7 @@ def test_init_with_kwargs_error(name: str,
     # Wrong estimatedTime type (str)
     with pytest.raises(Exception) as e_info:
         Recipe(name, ingredients, description,
-               estimatedTime="4")
+               estimatedTime="4 min")
 
     assert e_info.type is TypeError
 

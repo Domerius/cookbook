@@ -6,6 +6,11 @@ class Difficulty(Enum):
     HARD = 3
     
     def __str__(self):
+        """ Returns user-oriented representation of this class. """
+        return self.name.capitalize()
+    
+    def __repr__(self):
+        """ Returns developer-oriented representation of this class. """
         return self.name.lower()
     
     def __lt__(self, other):
