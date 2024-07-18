@@ -103,6 +103,7 @@ class Recipe:
             **kwargs: Accepts all optional class parameters
         """
 
+        # Check if argument types are correct and make sense
         if not checkType(name, str):
             raise TypeError(f"Parameter 'name' has wrong type: {type(name)}. " \
                             "Should be str.")
@@ -117,7 +118,7 @@ class Recipe:
         self.nameFull = name
         self.__nameCompressed = compressName(name)
         self.ingredients = ingredients
-        self.description = description  if  isinstance(description, str)  else  f"\t{"\n\t".join(description)}\n"
+        self.description = description  if  isinstance(description, str)  else  f"\t{'\n\t'.join(description)}\n"
         
         # Assign optional keyword arguments
         keywords = {"estimatedTime": int, "difficulty": Difficulty, "relatedLinks": Union[str, list[str]]}
