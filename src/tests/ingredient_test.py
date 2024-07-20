@@ -38,7 +38,7 @@ def test_init(name_lowercase: str,
               measure_uncountable:Ingredient,
               unit_lowercase: str):
     """
-    TEST 1: Check if the Ingredient class initialises correctly
+    TEST 1: Check if the Ingredient class initialises correctly.
     """
 
     ingredient = Ingredient(name_lowercase, measure_uncountable, unit_lowercase)
@@ -50,7 +50,7 @@ def test_str(name_lowercase: str,
              measure_uncountable: Ingredient,
              unit_lowercase: str):
     """
-    TEST 2: Check if string representation of the Ingredient class is correct
+    TEST 2: Check if string representation of the Ingredient class is correct.
     """
 
     ingredient = Ingredient(name_lowercase, measure_uncountable, unit_lowercase)
@@ -60,7 +60,7 @@ def test_lowercase(name_capitalized: str,
                    measure_uncountable: Ingredient,
                    unit_capitalized: str):
     """
-    TEST 3: Check if the Ingredient class converts strings to lowercase
+    TEST 3: Check if the Ingredient class converts strings to lowercase.
     """
 
     ingredient = Ingredient(name_capitalized, measure_uncountable, unit_capitalized)
@@ -70,7 +70,7 @@ def test_lowercase(name_capitalized: str,
 def test_countable(name_countable: str,
                    measure_countable: Ingredient):
     """
-    TEST 4: Check if the Ingredient class manages countable articles
+    TEST 4: Check if the Ingredient class manages countable articles.
     """
 
     ingredient = Ingredient(name_countable, measure_countable)
@@ -81,7 +81,7 @@ def test_init_error(name_lowercase: str,
                     measure_uncountable: int,
                     unit_lowercase: str):
     """
-    TEST 5: Check if the Ingredient class handles exceptions properly
+    TEST 5: Check if the Ingredient class handles exceptions properly.
     """
     
     # Wrong name type (int)

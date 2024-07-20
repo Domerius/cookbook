@@ -102,7 +102,7 @@ def test_init(name: str,
               description: list[str],
               expected_description: str):
     """
-    TEST 1: Check if the Recipe class initialises correctly
+    TEST 1: Check if the Recipe class initialises correctly.
     """
 
     recipe = Recipe(name, ingredients, description)
@@ -118,7 +118,7 @@ def test_init_with_kwargs(name: str,
                           difficulty: Difficulty,
                           related_links: str):
     """
-    TEST 2: Check if the Recipe class initialises correctly with additional arguments
+    TEST 2: Check if the Recipe class initialises correctly with additional arguments.
     """
 
     recipe = Recipe(name, ingredients, description,
@@ -132,7 +132,7 @@ def test_init_error(name: str,
                     ingredients: list[Ingredient],
                     description: list[str]):
     """
-    TEST 3: Check if the Recipe class handles exceptions properly 
+    TEST 3: Check if the Recipe class handles exceptions properly.
     """
     
     # Wrong name type (list[str])
@@ -163,7 +163,7 @@ def test_init_with_kwargs_error(name: str,
                                 ingredients: list[Ingredient],
                                 description: list[str]):
     """
-    TEST 4: Check if the Recipe class handles more exceptions properly 
+    TEST 4: Check if the Recipe class handles more exceptions properly.
     """
     
     # Wrong estimatedTime type (str)
@@ -196,7 +196,7 @@ def test_str(name: str,
              related_links: str,
              expected_string: str):
     """
-    TEST 5: Check if the Recipe class has right string representation
+    TEST 5: Check if the Recipe class has right string representation.
     """
     
     recipe = Recipe(name, ingredients, description,

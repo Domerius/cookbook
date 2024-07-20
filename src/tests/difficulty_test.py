@@ -3,7 +3,7 @@ from ..core import Difficulty
 
 def test_init():
     """
-    TEST 1: Check if the Difficulty class contains only of atributes EASY, MEDIUM and HARD
+    TEST 1: Check if the Difficulty class contains only of atributes EASY, MEDIUM and HARD.
     """
     
     assert len(Difficulty) == 3
@@ -37,7 +37,7 @@ def test_compare_error():
 
 def test_str():
     """
-    TEST 4: Check if string representation of Difficulty atributes is correct
+    TEST 4: Check if string representation of Difficulty atributes is correct.
     """
 
     outStr = str(Difficulty.EASY)
