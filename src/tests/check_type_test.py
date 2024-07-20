@@ -4,7 +4,7 @@ from typing import List, Set, Tuple, Dict, Union
 from ..helpers import checkType
 
 
-# Base fixtures
+# Base fixtures (lists so they can be converted to any other structure)
 @pytest.fixture()
 def base_int():
     return [1, 2, 3, 4]
@@ -133,7 +133,9 @@ def test_union_death(base_int: int):
     tuple_int = tuple(base_int)
     dict_int = {key:value for (key,value) in zip(base_int, base_int)}
 
+    # Check for interpreting properly different inner argument types
     assert not checkType(basic_int, Union[str, float, bool, complex, custom])
+    # Check for interpreting properly different type origins
     assert not checkType(basic_int, Union[List[int], Set[int], Tuple[int], Dict[int, int]])
     assert not checkType(list_int, Union[int, Set[int], Tuple[int], Dict[int, int]])
     assert not checkType(set_int, Union[int, List[int], Tuple[int], Dict[int, int]])

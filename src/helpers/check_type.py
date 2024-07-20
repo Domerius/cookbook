@@ -1,14 +1,14 @@
 from typing import Any, Type, Union, get_origin, get_args
 
 
-def checkType(variable: Any, expected_type: Type):
+def checkType(variable: Any, expected_type: Type) -> bool:
     """
     Check whether a variable has a correct type.
     Created to handle both built-in types and more complex containers like lists or dictionaries having regard to its inner types.
 
     Parameters:
-        variable: A variable that is being evaluated
-        type: Expected type of the variable (eg. int, list[str], dict[str, int])
+        variable (Any): A variable that is being evaluated
+        type (Type): Expected type of the variable (eg. int, list[str], dict[str, int])
     """
 
     origin_type = get_origin(expected_type)
@@ -27,7 +27,7 @@ def checkType(variable: Any, expected_type: Type):
             return False
         
         inner_types = get_args(expected_type)
-        # If there's no inner types, assume that the correct origin type is a satisfying condition
+        # If no inner types is specified as an expected type (e.g. list), assume that the correct origin type is a satisfying condition
         if inner_types == None:
             return True
         

@@ -41,7 +41,7 @@ class Recipe:
         relatedLinks (str): Hiperlinks directing to related web pages
     """
 
-    def __init__(self, name: str, ingredients: List[Ingredient], description: Union[str, List[str]], **kwargs) -> None:
+    def __init__(self, name: str, ingredients: List[Ingredient], description: Union[str, List[str]], **kwargs):
         """
         Initialises Recipe object:
 
@@ -82,7 +82,8 @@ class Recipe:
                 setattr(self, key, None)
     
     def __str__(self):
-        str_out = "{}\n\n".format(self.nameFull)    # Start string with the name of the recipe
+        # Start string with the name of the recipe
+        str_out = "{}\n\n".format(self.nameFull)
 
         # Print out the difficulty (if such exists)
         if hasattr(self, "difficulty"):

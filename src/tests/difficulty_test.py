@@ -1,6 +1,7 @@
 import pytest
 from ..core import Difficulty
 
+
 def test_init():
     """
     TEST 1: Check if the Difficulty class contains only of atributes EASY, MEDIUM and HARD.
@@ -10,7 +11,6 @@ def test_init():
     assert Difficulty.EASY in Difficulty
     assert Difficulty.MEDIUM in Difficulty
     assert Difficulty.HARD in Difficulty
-
 
 def test_compare():
     """
@@ -23,7 +23,6 @@ def test_compare():
     assert Difficulty.HARD > Difficulty.EASY
 
     assert Difficulty.MEDIUM == Difficulty.MEDIUM
-
 
 def test_compare_error():
     """
