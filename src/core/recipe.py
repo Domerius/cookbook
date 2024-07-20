@@ -67,7 +67,7 @@ class Recipe:
         self.nameFull = name
         self.__nameCompressed = compressName(name)
         self.ingredients = ingredients
-        self.description = description  if  isinstance(description, str)  else  f"\t{'\n\t'.join(description)}\n"
+        self.description = description  if  isinstance(description, str)  else  "\t{}\n".format('\n\t'.join(description))
         
         # Assign optional keyword arguments
         keywords = {"estimatedTime": int, "difficulty": Difficulty, "relatedLinks": Union[str, list[str]]}
@@ -82,32 +82,32 @@ class Recipe:
                 setattr(self, key, None)
     
     def __str__(self):
-        str_out = f"{self.nameFull}\n\n"    # Start string with the name of the recipe
+        str_out = "{}\n\n".format(self.nameFull)    # Start string with the name of the recipe
 
         # Print out the difficulty (if such exists)
         if hasattr(self, "difficulty"):
-            str_out += f"Difficulty: {self.difficulty}\n\n"
+            str_out += "Difficulty: {}\n\n".format(self.difficulty)
 
         # Print out the estimated time (if such exists)
         if hasattr(self, "estimatedTime"):
-            str_out += f"Estimated time: {self.estimatedTime} min\n\n"
+            str_out += "Estimated time: {} min\n\n".format(self.estimatedTime)
         
         # Print out the ingredients
         str_out += "Ingredients:"
         for ingredient in self.ingredients:
-            str_out += f"\n\t- {str(ingredient)}"
+            str_out += "\n\t- {}".format(str(ingredient))
         str_out += "\n\n"
 
         # Print out the description
-        str_out += f"Description:\n{self.description}"
+        str_out += "Description:\n{}".format(self.description)
 
         # Print out related links (if such exist)
         if hasattr(self, "relatedLinks"):
             if checkType(self.relatedLinks, list[str]):
                 str_out += "\nRelated links:"
                 for link in self.relatedLinks:
-                    str_out += f"\n\t{link}"
+                    str_out += "\n\t{}".format(link)
             elif checkType(self.relatedLinks, str):
-                str_out += f"\n\nRelated links: {self.relatedLinks}"
+                str_out += "\n\nRelated links: {}".format(self.relatedLinks)
 
         return str_out

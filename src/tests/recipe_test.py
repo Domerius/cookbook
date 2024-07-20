@@ -47,7 +47,7 @@ def expected_description(description: list):
     
     str_out = ''
     for paragraph in description:
-        str_out += f"\t{paragraph}\n"
+        str_out += "\t{}\n".format(paragraph)
         
     return str_out
 
@@ -81,17 +81,17 @@ def expected_string(name: str,
         https://drugastronainternetowa.com
     """
             
-    str_out = f"{name}\n\n"
-    str_out += f"Difficulty: {difficulty}\n\n"
-    str_out += f"Estimated time: {estimated_time} min\n\n"
+    str_out = "{}\n\n".format(name)
+    str_out += "Difficulty: {}\n\n".format(difficulty)
+    str_out += "Estimated time: {} min\n\n".format(estimated_time)
     str_out += "Ingredients:\n"
     for ingredient in ingredients:
-        str_out += f"\t- {str(ingredient)}\n"
+        str_out += "\t- {}\n".format(str(ingredient))
     str_out += "\n"
-    str_out += f"Description:\n\t{"\n\t".join(description)}"
+    str_out += "Description:\n\t{}".format("\n\t".join(description))
     str_out += "\n\nRelated links:"
     for link in related_links:
-        str_out += f"\n\t{link}"
+        str_out += "\n\t{}".format(link)
 
     return str_out
 
