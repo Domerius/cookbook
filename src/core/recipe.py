@@ -1,6 +1,6 @@
 from __future__ import annotations
 from string import punctuation, digits
-from typing import Union
+from typing import List, Union
 
 from .difficulty import Difficulty
 from .ingredient import Ingredient
@@ -41,7 +41,7 @@ class Recipe:
         relatedLinks (str): Hiperlinks directing to related web pages
     """
 
-    def __init__(self, name: str, ingredients: list[Ingredient], description: Union[str, list[str]], **kwargs) -> None:
+    def __init__(self, name: str, ingredients: List[Ingredient], description: Union[str, List[str]], **kwargs) -> None:
         """
         Initialises Recipe object:
 
@@ -59,7 +59,7 @@ class Recipe:
         if not checkType(ingredients, list) or len(ingredients) < 2:
             raise TypeError(f"Parameter 'ingredients' has wrong type: {type(ingredients)} or contains too little entries: {len(ingredients)}. " \
                             "Type should be list[Ingredient] and the list is supposed to have at least 2 elements.")
-        if not checkType(description, Union[str, list[str]]):
+        if not checkType(description, Union[str, List[str]]):
             raise TypeError(f"Parameter 'description' has wrong type: {type(name)}. " \
                             "Should be str or list[str].")
         
@@ -70,7 +70,7 @@ class Recipe:
         self.description = description  if  isinstance(description, str)  else  "\t{}\n".format('\n\t'.join(description))
         
         # Assign optional keyword arguments
-        keywords = {"estimatedTime": int, "difficulty": Difficulty, "relatedLinks": Union[str, list[str]]}
+        keywords = {"estimatedTime": int, "difficulty": Difficulty, "relatedLinks": Union[str, List[str]]}
         for key in keywords.keys():
             if key in kwargs.keys():
                 if checkType(kwargs[key], keywords[key]):
@@ -103,7 +103,7 @@ class Recipe:
 
         # Print out related links (if such exist)
         if hasattr(self, "relatedLinks"):
-            if checkType(self.relatedLinks, list[str]):
+            if checkType(self.relatedLinks, List[str]):
                 str_out += "\nRelated links:"
                 for link in self.relatedLinks:
                     str_out += "\n\t{}".format(link)

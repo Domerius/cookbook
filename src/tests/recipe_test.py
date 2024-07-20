@@ -1,5 +1,7 @@
 from __future__ import annotations
+from typing import List
 import pytest
+
 from ..core import Recipe, Ingredient, Difficulty
 
 # Recipe's name fixtures
@@ -54,10 +56,10 @@ def expected_description(description: list):
 @pytest.fixture()
 def expected_string(name: str,
                     ingredients: Ingredient,
-                    description: list[str],
+                    description: List[str],
                     estimated_time: int,
                     difficulty: Difficulty,
-                    related_links: list[str]):
+                    related_links: List[str]):
     
     """
     Naleśniki z serem
@@ -99,7 +101,7 @@ def expected_string(name: str,
 # Tests of __init__
 def test_init(name: str,
               ingredients: Ingredient,
-              description: list[str],
+              description: List[str],
               expected_description: str):
     """
     TEST 1: Check if the Recipe class initialises correctly.
@@ -113,7 +115,7 @@ def test_init(name: str,
     
 def test_init_with_kwargs(name: str,
                           ingredients: Ingredient,
-                          description: list[str],
+                          description: List[str],
                           estimated_time: int,
                           difficulty: Difficulty,
                           related_links: str):
@@ -129,8 +131,8 @@ def test_init_with_kwargs(name: str,
     assert recipe.relatedLinks == related_links
     
 def test_init_error(name: str,
-                    ingredients: list[Ingredient],
-                    description: list[str]):
+                    ingredients: List[Ingredient],
+                    description: List[str]):
     """
     TEST 3: Check if the Recipe class handles exceptions properly.
     """
@@ -160,8 +162,8 @@ def test_init_error(name: str,
     assert e_info.type is TypeError
     
 def test_init_with_kwargs_error(name: str,
-                                ingredients: list[Ingredient],
-                                description: list[str]):
+                                ingredients: List[Ingredient],
+                                description: List[str]):
     """
     TEST 4: Check if the Recipe class handles more exceptions properly.
     """
@@ -190,7 +192,7 @@ def test_init_with_kwargs_error(name: str,
 # Tests of __str__
 def test_str(name: str,
              ingredients: Ingredient,
-             description: list[str],
+             description: List[str],
              estimated_time: int,
              difficulty: Difficulty,
              related_links: str,

@@ -1,5 +1,5 @@
 import pytest
-from typing import Union
+from typing import List, Set, Tuple, Dict, Union
 
 from ..helpers import checkType
 
@@ -76,9 +76,9 @@ def test_list_set_tuple(base_int: int,
 
     # We iterate through built-in and a custom type
     for var_type in [(base_int, int), (base_str, str), (base_float, float), (base_bool, bool), (base_complex, complex), (base_custom, custom)]:
-        assert checkType(list(var_type[0]), list[var_type[1]])
-        assert checkType(set(var_type[0]), set[var_type[1]])
-        assert checkType(tuple(var_type[0]), tuple[var_type[1]])
+        assert checkType(list(var_type[0]), List[var_type[1]])
+        assert checkType(set(var_type[0]), Set[var_type[1]])
+        assert checkType(tuple(var_type[0]), Tuple[var_type[1]])
 
 def test_dict(base_int: int,
               base_str: str,
@@ -94,7 +94,7 @@ def test_dict(base_int: int,
     type_matrix = [(base_int, int), (base_str, str), (base_float, float), (base_bool, bool), (base_complex, complex), (base_custom, custom)]
     for key_type in type_matrix:
         for value_type in type_matrix:
-            assert checkType({key:value for (key, value) in zip(key_type[0], value_type[0])}, dict[key_type[1], value_type[1]])
+            assert checkType({key:value for (key, value) in zip(key_type[0], value_type[0])}, Dict[key_type[1], value_type[1]])
 
 def test_empty():
     """
@@ -104,7 +104,7 @@ def test_empty():
     # Create empty conatiner of each type: list, set, tuple, dictionary
     empty_list = []
     empty_set = set([])
-    empty_tuple = tuple([])
+    empty_tuple = ()
     empty_dict = {}
 
     assert checkType(empty_list, list)
@@ -119,7 +119,7 @@ def test_union(base_int: int):
 
     # Iterate through each type of structure of type int
     for var_type in [base_int[0], base_int, set(base_int), tuple(base_int), {key:value for (key,value) in zip(base_int, base_int)}]:
-        assert checkType(var_type, Union[int, list[int], set[int], tuple[int], dict[int, int]])
+        assert checkType(var_type, Union[int, List[int], Set[int], Tuple[int], Dict[int, int]])
 
 def test_union_death(base_int: int):
     """
@@ -134,8 +134,8 @@ def test_union_death(base_int: int):
     dict_int = {key:value for (key,value) in zip(base_int, base_int)}
 
     assert not checkType(basic_int, Union[str, float, bool, complex, custom])
-    assert not checkType(basic_int, Union[list[int], set[int], tuple[int], dict[int, int]])
-    assert not checkType(list_int, Union[int, set[int], tuple[int], dict[int, int]])
-    assert not checkType(set_int, Union[int, list[int], tuple[int], dict[int, int]])
-    assert not checkType(tuple_int, Union[int, list[int], set[int], dict[int, int]])
-    assert not checkType(dict_int, Union[int, list[int], set[int], tuple[int]])
+    assert not checkType(basic_int, Union[List[int], Set[int], Tuple[int], Dict[int, int]])
+    assert not checkType(list_int, Union[int, Set[int], Tuple[int], Dict[int, int]])
+    assert not checkType(set_int, Union[int, List[int], Tuple[int], Dict[int, int]])
+    assert not checkType(tuple_int, Union[int, List[int], Set[int], Dict[int, int]])
+    assert not checkType(dict_int, Union[int, List[int], Set[int], Tuple[int]])
