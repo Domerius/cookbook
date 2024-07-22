@@ -67,7 +67,7 @@ class Recipe:
         self.nameFull = name
         self.__nameCompressed = compressName(name)
         self.ingredients = ingredients
-        self.description = description  if  isinstance(description, str)  else  "\t{}\n".format('\n\t'.join(description))
+        self.description = description if isinstance(description, str) else "\t{}\n".format('\n\t'.join(description))
         
         # Assign optional keyword arguments
         keywords = {"estimatedTime": int, "difficulty": Difficulty, "relatedLinks": Union[str, List[str]]}
