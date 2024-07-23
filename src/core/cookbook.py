@@ -17,7 +17,10 @@ class Classifier(ABC):
     An abstract class handling sorting and filtering of an object.
     """
 
-    def __filterStructureByMultipleKeys(self, filteringBase: List[Union[G, List[G]]], keys: List[G], mutualExclusion: bool = False) -> List[int]:
+    def _getSortingOrder(self, sortingBase: List[Union[G, List[G]]], reverse: bool = False) -> List[int]:
+        return sorted(range(len(sortingBase)), key=lambda i: sortingBase[i], reverse=reverse)
+
+    def __filterStructureByMultipleKeys(self, filteringBase: List[Union[G, List[G]]], keys: List[G], mutualExclusion: bool) -> List[int]:
         """
         Filters the filtering_base based on the presence of keys.
 
@@ -88,7 +91,7 @@ class Classifier(ABC):
         return [i for i, item in enumerate(filteringBase) if filteringFunc(item)]
 
     # Jak dojdę do wniosku, że muszę zmienić filtrowanie w Cookbook, to to dalej będzie bazą pod tamto
-    def _filterStructure(self, unfilteredStruct: List[T], filteringBase: List[Union[G, List[G]]], keys: Union[G, List[G]], mutualExclusion: bool = False) -> List[T]:
+    def _filterStructure(self, unfilteredStruct: List[T], filteringBase: List[Union[G, List[G]]], keys: Union[G, List[G]], mutualExclusion: bool) -> List[T]:
         # Call the correct function depending on input keys
         if get_origin(keys) == List:
             mask = self.__filterStructureByMultipleKeys(filteringBase, keys, mutualExclusion)
@@ -101,7 +104,7 @@ class Cookbook(Classifier):
     Contains all recipes, manages them into files, allows sorting and filtering.
 
     Parameters:
-        recipes (list[Recipe]): List of every registered recipe in the app.
+        recipes (np.array[Recipe]): List of every registered recipe in the app.
     """
 
     def __init__(self, recipes: List[Recipe]):
@@ -114,33 +117,46 @@ class Cookbook(Classifier):
         return self._recipes
     
     def sortRecipesAlphabetically(self, reverse: bool = False) -> None:
-        pass
+        sortingBase = [recipe.nameFull for recipe in self._recipes]
+        order = super()._getSortingOrder(sortingBase, reverse)
+        self._recipes = [self._recipes[i] for i in order]
 
     def sortRecipesByIngredientCount(self, reverse: bool = False) -> None:
-        pass
+        sortingBase = [len(recipe.ingredients) for recipe in self._recipes]
+        order = super()._getSortingOrder(sortingBase, reverse)
+        self._recipes = [self._recipes[i] for i in order]
 
     def sortRecipesByDifficulty(self, reverse: bool = False) -> None:
-        pass
+        sortingBase = [(recipe.difficulty is not None, recipe.difficulty) for recipe in self._recipes] if reverse else [(recipe.difficulty is None, recipe.difficulty) for recipe in self._recipes]
+        order = super()._getSortingOrder(sortingBase, reverse)
+        self._recipes = [self._recipes[i] for i in order]
 
     def sortRecipesByEstimatedTime(self, reverse: bool = False) -> None:
         # Get sorting order from the base and then apply the sorting order to the cookbook
-        sortingBase = [recipe.estimatedTime for recipe in self._recipes]
-        sortingFunc = lambda x: (x is not None, x) if reverse else (x is None, x)
-        order = sorted(sortingBase, reverse=reverse, key=sortingFunc)
+        sortingBase = [(recipe.estimatedTime is not None, recipe.estimatedTime) for recipe in self._recipes] if reverse else [(recipe.estimatedTime is None, recipe.estimatedTime) for recipe in self._recipes]
+        order = super()._getSortingOrder(sortingBase, reverse)
         self._recipes = [self._recipes[i] for i in order]
         # https://stackoverflow.com/questions/18411560/sort-list-while-pushing-none-values-to-the-end
     
-    def filterRecipesByNamePhrases(self, filteringBase: List[G | List[G]], keys: List[G], mutualExclusion: bool = False) ->  None:
-        pass
+    def filterRecipesByNamePhrases(self, keys: List[str], mutualExclusion: bool = False) ->  list[Recipe]:
+        filteringBase = [recipe.nameFull for recipe in self._recipes]
+        mask = super()._filterStructure(filteringBase, keys, mutualExclusion)
+        return [self._recipes[i] for i in mask]
 
-    def filterRecipesByIngredients(self, filteringBase: List[G | List[G]], keys: List[G], mutualExclusion: bool = False) -> None:
-        pass
+    def filterRecipesByIngredients(self, keys: List[G], mutualExclusion: bool = False) -> list[Recipe]:
+        filteringBase = [recipe.ingredients for recipe in self._recipes]
+        mask = super()._filterStructure(filteringBase, keys, mutualExclusion)
+        return [self._recipes[i] for i in mask]
 
-    def filterRecipesByDifficulty(self, filteringBase: List[G | List[G]], keys: List[G], mutualExclusion: bool = False) -> None:
-        pass
+    def filterRecipesByDifficulty(self, filteringBase: List[G | List[G]], keys: List[G], mutualExclusion: bool = False) -> list[Recipe]:
+        filteringBase = [recipe.difficulty for recipe in self._recipes]
+        mask = super()._filterStructure(filteringBase, keys, mutualExclusion)
+        return [self._recipes[i] for i in mask]
 
-    def filterRecipesByEstimatedTime(self, filteringBase: List[G | List[G]], keys: List[G], mutualExclusion: bool = False) -> None:
-        pass
+    def filterRecipesByEstimatedTime(self, filteringBase: List[G | List[G]], keys: List[G], mutualExclusion: bool = False) -> list[Recipe]:
+        filteringBase = [recipe.estimatedTime for recipe in self._recipes]
+        mask = super()._filterStructure(filteringBase, keys, mutualExclusion)
+        return [self._recipes[i] for i in mask]
     
     def __createFileFromRecipe(self):
         pass

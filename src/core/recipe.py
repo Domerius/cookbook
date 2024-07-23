@@ -38,7 +38,7 @@ class Recipe:
         description (str): Description mainly containing instructions for making the recipe
         estimatedTime (int): Estimated time which is supposed to take in order to prepare the meal
         difficulty (Difficulty): Subjective difficulty of the recipe
-        relatedLinks (str): Hiperlinks directing to related web pages
+        relatedLinks (Union[str, List[str]]): Hiperlinks directing to related web pages
     """
 
     def __init__(self, name: str, ingredients: List[Ingredient], description: Union[str, List[str]], **kwargs):
