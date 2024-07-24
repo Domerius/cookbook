@@ -1,4 +1,5 @@
-from typing import List, Union, Any, Callable, Iterable, TypeVar, Generic, get_origin, get_args
+from typing import List, Union, Any, Container, TypeVar, get_origin
+import numpy as np
 from abc import ABC
 
 from .difficulty import Difficulty
@@ -11,27 +12,58 @@ from ..helpers import checkType
 T = TypeVar("T")
 G = TypeVar("G")
 
+class CookbookBase(ABC):
+    def __init__(self, recipes: List[Recipe]) -> None:
+        self._recipes = recipes
 
-class Classifier(ABC):
+class RecipeOrganizer(CookbookBase):
     """
-    An abstract class handling sorting and filtering of an object.
+    An abstract class handling sorting and filtering of the recipes in the Cookbook class.
     """
 
-    def _getSortingOrder(self, sortingBase: List[Union[G, List[G]]], reverse: bool = False) -> List[int]:
-        return sorted(range(len(sortingBase)), key=lambda i: sortingBase[i], reverse=reverse)
-
-    def __filterStructureByMultipleKeys(self, filteringBase: List[Union[G, List[G]]], keys: List[G], mutualExclusion: bool) -> List[int]:
+    def _sortRecipes(self, attribute: str, reverse: bool = False) -> None:
         """
         Filters the filtering_base based on the presence of keys.
 
         Parameters:
-        - filteringBase: List serving as the base for filtering. Can contain elements or lists of elements.
-        - keys: List of keys to filter by.
-        - mutualExclusion: If True, all keys must be present in an element. If False, any key can be present.
+        - attribute (str): A name of the Recipe's field serving as the base for sorting.
+        - reverse (bool): List of keys to filter by.
+        """
+
+        if attribute not in Recipe.__dir__:
+            raise TypeError(f"The Recipe class doesn't have a field of type {attribute}. " \
+                            f"Should be one of the following: {Recipe.__dir__}")
+        
+        # Create a base for sorting - additional column allows pushing None values to the end
+        moveToEnd = lambda x: x is not None if reverse else x is None
+        sortingBase = np.array([(getattr(recipe, attribute), moveToEnd(getattr(recipe, attribute))) for recipe in self._recipes])
+        # Get sorting order firstly sorting by target value and then push None values to the end of the order
+        order = sortingBase[sortingBase[:, 0].argsort(kind='stable')[::-1]] if reverse else sortingBase[sortingBase[:, 0].argsort(kind='stable')]
+        order = order[order[:,1].argsort(kind='stable')]
+        # Apply the new order to the whole list of recipes
+        self._recipes[:] = [self._recipes[i] for i in order]
+    
+    def __filterRecipesByMultipleKeys(self, attribute: str, keys: List[Any], mutualExclusion: bool) -> List[int]:
+        """
+        Filters the filtering_base based on the presence of keys.
+
+        Parameters:
+        - attribute (str): A name of the Recipe's field serving as the base for filtering.
+        - keys (List[Any]): List of keys to filter by.
+        - mutualExclusion (bool): If True, all keys must be present in an element. If False, any key can be present.
 
         Returns:
-        - List[int]: Indices of elements in filtering_base that match the filter criteria.
+        - List[int]: Indices of elements that match the filter criteria for the chosen attribute.
         """
+
+        # Check if the attribute of the Recipe class is chosen correctly
+        if attribute not in Recipe.__dir__:
+            raise TypeError(f"The Recipe class doesn't have a field of type {attribute}. " \
+                            f"Should be one of the following: {Recipe.__dir__}")
+        
+        # Create a list for filtering to base on by extracting the value from beneath the chosen attribute
+        # We don't need to worry about None values - they will be ignored automatically as they won't match any key
+        filteringBase = [getattr(recipe, attribute) for recipe in self._recipes]
 
         # If the base for filtering doesn't contain of lists of items, there's no possibility for any item to match multiple keys
         baseTypes = set(type(item) for item in filteringBase)
@@ -56,23 +88,31 @@ class Classifier(ABC):
                             f"Should be {type(keysType)} or List{type(keysType)}.")
         
         # Apply the filtering function and return indices of matching elements
-        return [i for i, item in enumerate(filteringBase) if filteringFunc(item)]
+        return [idx for idx, item in enumerate(filteringBase) if filteringFunc(item)]
 
-    def __filterStructureBySingleKey(self, filteringBase: List[Union[G, List[G]]], key: G) -> List[int]:
+    def __filterRecipesBySingleKey(self, attribute: str, key: Any) -> List[int]:
         """
         Filters the filtering_base based on the presence of a single key.
 
         Parameters:
-        - filteringBase: List serving as the base for filtering. Can contain elements or lists of elements.
-        - keys: List of keys to filter by.
-        - mutualExclusion: If True, all keys must be present in an element. If False, any key can be present.
+        - attribute (str): A name of the Recipe's field serving as the base for filtering.
+        - key (Any): A key to filter by.
 
         Returns:
-        - List[int]: Indices of elements in filtering_base that match the filter criteria.
+        - List[int]: Indices of elements that match the filter criteria for the chosen attribute.
         """
 
+        # Check if the attribute of the Recipe class is chosen correctly
+        if attribute not in Recipe.__dir__:
+            raise TypeError(f"The Recipe class doesn't have a field of type {attribute}. " \
+                            f"Should be one of the following: {Recipe.__dir__}")
+        
+        # Create a list for filtering to base on by extracting the value from beneath the chosen attribute
+        # We don't need to worry about None values - they will be ignored automatically as they won't match any key
+        filteringBase = [getattr(recipe, attribute) for recipe in self._recipes]
+
         # Check if the key is a single item
-        if len(key) > 1:
+        if get_origin(key) is Container and len(key) > 1:
             raise TypeError(f"Input key has multiple values: {key}.")
 
         # A function that the filtering bases on
@@ -88,18 +128,29 @@ class Classifier(ABC):
                             f"Should be {type(keyType)} or List{type(keyType)}.")
     
         # Apply the filtering function and return indices of matching elements
-        return [i for i, item in enumerate(filteringBase) if filteringFunc(item)]
+        return [idx for idx, item in enumerate(filteringBase) if filteringFunc(item)]
 
-    # Jak dojdę do wniosku, że muszę zmienić filtrowanie w Cookbook, to to dalej będzie bazą pod tamto
-    def _filterStructure(self, unfilteredStruct: List[T], filteringBase: List[Union[G, List[G]]], keys: Union[G, List[G]], mutualExclusion: bool) -> List[T]:
-        # Call the correct function depending on input keys
+    def _filterRecipes(self, attribute: str, keys: Union[G, List[G]], mutualExclusion: bool) -> List[int]:
+        """
+        Filters the filtering_base based on the presence of a single key.
+
+        Parameters:
+        - attribute (str): A name of the Recipe's field serving as the base for filtering.
+        - keys (List[Any]): List of keys to filter by.
+        - mutualExclusion (bool): If True, all keys must be present in an element. If False, any key can be present.
+
+        Returns:
+        - List[Recipe]: Recipes that match the filter criteria for the chosen attribute.
+        """
+
+        # Call the correct function depending on input keys and return indices of filtered recipes
         if get_origin(keys) == List:
-            mask = self.__filterStructureByMultipleKeys(filteringBase, keys, mutualExclusion)
+            return self.__filterRecipesByMultipleKeys(attribute, keys, mutualExclusion)
         else:
-            mask = self.__filterStructureBySingleKey(filteringBase, keys)
-        return [unfilteredStruct[i] for i in mask]
+            return self.__filterRecipesBySingleKey(attribute, keys)
+    
 
-class Cookbook(Classifier):
+class Cookbook(RecipeOrganizer):
     """
     Contains all recipes, manages them into files, allows sorting and filtering.
 
@@ -107,8 +158,8 @@ class Cookbook(Classifier):
         recipes (np.array[Recipe]): List of every registered recipe in the app.
     """
 
-    def __init__(self, recipes: List[Recipe]):
-        self._recipes = recipes
+    def __init__(self, recipe):
+        super().__init__(recipe)
 
     def __str__(self):
         pass
@@ -116,59 +167,29 @@ class Cookbook(Classifier):
     def __repr__(self):
         return self._recipes
     
+    # Sorting methods - for sorting by more than 1 criterium call the methods one after another (last one will lead)
     def sortRecipesAlphabetically(self, reverse: bool = False) -> None:
-        sortingBase = [recipe.nameFull for recipe in self._recipes]
-        order = super()._getSortingOrder(sortingBase, reverse)
-        self._recipes = [self._recipes[i] for i in order]
+        super()._sortRecipes("nameFull", reverse)
 
     def sortRecipesByIngredientCount(self, reverse: bool = False) -> None:
-        sortingBase = [len(recipe.ingredients) for recipe in self._recipes]
-        order = super()._getSortingOrder(sortingBase, reverse)
-        self._recipes = [self._recipes[i] for i in order]
+        super()._sortRecipes("ingredientsCount", reverse)
 
     def sortRecipesByDifficulty(self, reverse: bool = False) -> None:
-        sortingBase = [(recipe.difficulty is not None, recipe.difficulty) for recipe in self._recipes] if reverse else [(recipe.difficulty is None, recipe.difficulty) for recipe in self._recipes]
-        order = super()._getSortingOrder(sortingBase, reverse)
-        self._recipes = [self._recipes[i] for i in order]
+        super()._sortRecipes("difficulty", reverse)
 
     def sortRecipesByEstimatedTime(self, reverse: bool = False) -> None:
-        # Get sorting order from the base and then apply the sorting order to the cookbook
-        sortingBase = [(recipe.estimatedTime is not None, recipe.estimatedTime) for recipe in self._recipes] if reverse else [(recipe.estimatedTime is None, recipe.estimatedTime) for recipe in self._recipes]
-        order = super()._getSortingOrder(sortingBase, reverse)
-        self._recipes = [self._recipes[i] for i in order]
-        # https://stackoverflow.com/questions/18411560/sort-list-while-pushing-none-values-to-the-end
+        super()._sortRecipes("estimatedTime", reverse)
     
-    def filterRecipesByNamePhrases(self, keys: List[str], mutualExclusion: bool = False) ->  list[Recipe]:
-        filteringBase = [recipe.nameFull for recipe in self._recipes]
-        mask = super()._filterStructure(filteringBase, keys, mutualExclusion)
-        return [self._recipes[i] for i in mask]
-
-    def filterRecipesByIngredients(self, keys: List[G], mutualExclusion: bool = False) -> list[Recipe]:
-        filteringBase = [recipe.ingredients for recipe in self._recipes]
-        mask = super()._filterStructure(filteringBase, keys, mutualExclusion)
-        return [self._recipes[i] for i in mask]
-
-    def filterRecipesByDifficulty(self, filteringBase: List[G | List[G]], keys: List[G], mutualExclusion: bool = False) -> list[Recipe]:
-        filteringBase = [recipe.difficulty for recipe in self._recipes]
-        mask = super()._filterStructure(filteringBase, keys, mutualExclusion)
-        return [self._recipes[i] for i in mask]
-
-    def filterRecipesByEstimatedTime(self, filteringBase: List[G | List[G]], keys: List[G], mutualExclusion: bool = False) -> list[Recipe]:
-        filteringBase = [recipe.estimatedTime for recipe in self._recipes]
-        mask = super()._filterStructure(filteringBase, keys, mutualExclusion)
-        return [self._recipes[i] for i in mask]
+    # Filtering methods - for filtering by more than 1 criterium call each method and pick a common part from each mask
+    # Keep products of each method separatelly so you can reverse filtering
+    def filterRecipesByNamePhrases(self, keys: List[str], mutualExclusion: bool = False) ->  list[int]:
+        return super()._filterRecipes("nameFull", keys, mutualExclusion)
     
-    def __createFileFromRecipe(self):
-        pass
+    def filterRecipesByNamePhrases(self, keys: List[str], mutualExclusion: bool = False) ->  list[int]:
+        return super()._filterRecipes("ingredients", keys, mutualExclusion)
 
-    def __updateFileWithRecipe(self):
-        pass
+    def filterRecipesByNamePhrases(self, keys: List[str], mutualExclusion: bool = False) ->  list[int]:
+        return super()._filterRecipes("difficulty", keys, mutualExclusion)
 
-    def __RemoveFileWithRecipe(self):
-        pass
-
-    def __getRecipeFromFile(self):
-        pass
-
-    # Można zrobić operacje na plikach w osobnej klasie i potem np. __getRecipeFromFile = __getRecipeFromFile(self, self._cookbook) (dziedziczenie)
-    # Można też to samo zrobić dla filtrowania. Nie wiem, klasa abstrakcyjna gdzie jest jedna funkcja, która filtruje (i może sortuje) ze względu na wskazaną kolumnę (pole klasy).
+    def filterRecipesByNamePhrases(self, keys: List[str], mutualExclusion: bool = False) ->  list[int]:
+        return super()._filterRecipes("estimatedTime", keys, mutualExclusion)

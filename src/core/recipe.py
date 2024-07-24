@@ -1,4 +1,5 @@
 from __future__ import annotations
+from collections.abc import Iterable
 from string import punctuation, digits
 from typing import List, Union
 
@@ -22,10 +23,8 @@ def compressName(name: str) -> str:
         # Leave the word as it is
         return nameSplit[0].capitalize()
     else:
-        nameCompressed = ''
-        for word in nameSplit:
-            nameCompressed += word[0:2].capitalize()
-        return nameCompressed
+        # Conjoin each word
+        return ''.join(word.capitalize() for word in nameSplit)
     
 
 class Recipe:
@@ -35,13 +34,13 @@ class Recipe:
     Parameters:
         name (str): Name of the recipe
         ingredients (list[Ingredient]): List of needed ingeredients
-        description (str): Description mainly containing instructions for making the recipe
+        description (Union[str, List[str]]): Description mainly containing instructions for making the recipe
         estimatedTime (int): Estimated time which is supposed to take in order to prepare the meal
         difficulty (Difficulty): Subjective difficulty of the recipe
         relatedLinks (Union[str, List[str]]): Hiperlinks directing to related web pages
     """
 
-    def __init__(self, name: str, ingredients: List[Ingredient], description: Union[str, List[str]], **kwargs):
+    def __init__(self, name: str, ingredients: List[Ingredient], description: Union[str, List[str]], **kwargs) -> None:
         """
         Initialises Recipe object:
 
@@ -65,8 +64,9 @@ class Recipe:
         
         # Assign mandatory arguments
         self.nameFull = name
-        self.__nameCompressed = compressName(name)
+        self.nameCompressed = compressName(name)
         self.ingredients = ingredients
+        self.ingredientsCount = len(ingredients)
         self.description = description if isinstance(description, str) else "\t{}\n".format('\n\t'.join(description))
         
         # Assign optional keyword arguments
@@ -81,7 +81,7 @@ class Recipe:
             else:
                 setattr(self, key, None)
     
-    def __str__(self):
+    def __str__(self) -> str:
         # Start string with the name of the recipe
         str_out = "{}\n\n".format(self.nameFull)
 
@@ -112,3 +112,7 @@ class Recipe:
                 str_out += "\n\nRelated links: {}".format(self.relatedLinks)
 
         return str_out
+    
+    def __dir__(self) -> Iterable[str]:
+        return ["nameFull", "nameCompressed", "ingredients", "ingredientsCount", "description",
+                "estimatedTime", "difficulty", "relatedLinks"]
