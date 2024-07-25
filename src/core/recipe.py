@@ -1,7 +1,7 @@
 from __future__ import annotations
 from collections.abc import Iterable
 from string import punctuation, digits
-from typing import List, Union
+from typing import List, Dict, Union
 
 from .difficulty import Difficulty
 from .ingredient import Ingredient
@@ -80,6 +80,40 @@ class Recipe:
                                     f"Should be {keywords[key]}.")
             else:
                 setattr(self, key, None)
+
+    @classmethod
+    def fromJSON(cls, jsonData: Dict) -> Recipe:
+        """
+        An alternative constructor for the Recipe class.
+        Accepts JSON files (passed as dictionaries), unpacks them and calls the main constructor of the class.
+        """
+
+        # In __init__ every wrong key would be ignored so we may want to check it here
+        if not all(jsonData.keys in Recipe.__dir__):
+            raise TypeError(f"The following key don't match any attribute of the Recipe class: {jsonData.keys not in Recipe.__dir__}. " \
+                            f"Should be one of the following: {Recipe.__dir__}")
+
+        # Pop every mandatory attribute from the dict and leave the rest as kwargs.
+        name = jsonData.popitem('nameFull')
+        ingredients = jsonData.popitem('ingredients')
+        description = jsonData.popitem('description')
+        
+        # Call the proper constructor
+        return cls(name, ingredients, description, jsonData)
+    
+    def getJSON(self) -> Dict:
+        """
+        Returns a JSON representation of the Recipe class in form of a dictionary.
+        """
+
+        # Insert values of attributes included below into the dictionary
+        jsonData = {}
+        includedAttributes = ["nameFull", "ingredients", "description", "estimatedTime", "difficulty", "relatedLinks"]
+        for attribute in includedAttributes:
+            if getattr(self, attribute):
+                jsonData[attribute] = getattr(self, attribute)
+
+        return jsonData
     
     def __str__(self) -> str:
         # Start string with the name of the recipe
@@ -112,6 +146,9 @@ class Recipe:
                 str_out += "\n\nRelated links: {}".format(self.relatedLinks)
 
         return str_out
+    
+    def __repr__(self) -> str:
+        return f"{type(self).__name__}({', '.join([attr + ': ' + repr(getattr(self, attr)) for attr in self.__dir__])})"
     
     def __dir__(self) -> Iterable[str]:
         return ["nameFull", "nameCompressed", "ingredients", "ingredientsCount", "description",

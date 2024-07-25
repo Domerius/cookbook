@@ -1,4 +1,4 @@
 [project]
 name = "cookbook"
-version = "0.24"
+version = "0.25"
 description = "A simple project that allows keeping your cooking recipes in one place."
