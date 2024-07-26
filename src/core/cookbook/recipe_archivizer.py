@@ -17,11 +17,11 @@ class RecipeArchivizer(CookbookBase):
     Recipes are saved in files as JSONs.
     """
 
-    def __init__(self, recipes: List[Recipe]) -> None:
-        super(RecipeArchivizer, self).__init__(recipes)
+    def __init__(self) -> None:
+        super(RecipeArchivizer, self).__init__()
         self.__path = DIR_PATH
 
-    def createFile(self, recipe: Recipe) -> bool:
+    def _createFile(self, recipe: Recipe) -> bool:
         """ Try creating a file - write the recipe into the file if it hasn't existed before call. """
 
         fileName = recipe.nameCompressed
@@ -33,7 +33,7 @@ class RecipeArchivizer(CookbookBase):
         else:
             return False
         
-    def updateFile(self, recipe: Recipe) -> bool:
+    def _updateFile(self, recipe: Recipe) -> bool:
         """ Try finding a file - overwrite it if found. """
 
         fileName = recipe.nameCompressed
@@ -45,7 +45,7 @@ class RecipeArchivizer(CookbookBase):
         else:
             return False
         
-    def removeFile(self, fileName: str) -> bool:
+    def _removeFile(self, fileName: str) -> bool:
         """ Try to find the pointed file - remove it if found. """
 
         filePath = self.__path + "/" + fileName
@@ -55,13 +55,13 @@ class RecipeArchivizer(CookbookBase):
         else:
             return False
 
-    def getFileNames(self) -> List[str]:
+    def _getFileNames(self) -> List[str]:
         """ Return a list of all files in the 'recipes' directory. """
 
         # It may be usefull to check whether all files are .json just in case
         return os.listdir(self.__path)
 
-    def readFile(self, fileName: str) -> Recipe:
+    def _readFile(self, fileName: str) -> Recipe:
         """ Try to read a file - if not succesful raise an exception. """
 
         filePath = self.__path + "/" + fileName

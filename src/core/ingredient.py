@@ -46,3 +46,6 @@ class Ingredient:
     def __repr__(self):
         """ Returns developer-oriented representation of this class. """
         return f"{type(self).__name__}(name={self.name}, measure={self.measure}, unit={self.unit})"
+    
+    def __eq__(self, cls: object) -> bool:
+        return all([getattr(self, attribute) == getattr(cls, attribute) for attribute in self.__dir__])

@@ -7,6 +7,30 @@ from .difficulty import Difficulty
 from .ingredient import Ingredient
 from ..helpers import checkType
 
+# Constants used for filtering attributes and checking their types in the Recipe class
+RECIPE_INPUT_MANDATORY = {"name": str,
+                          "ingredients": List[Ingredient],
+                          "description": Union[str, List[str]]}
+
+RECIPE_INPUT_OPTIONAL = {"estimatedTime": int,
+                         "difficulty": Difficulty,
+                         "relatedLinks": Union[str, List[str]]}
+
+RECIPE_ATTRIBUTES_PRIMARY = {"nameFull": str,
+                             "ingredients": List[Ingredient],
+                             "description": str,
+                             "estimatedTime": int,
+                             "difficulty": Difficulty,
+                             "relatedLinks": Union[str, List[str]]}
+
+RECIPE_ATTRIBUTES_ALL = {"nameFull": str,
+                         "nameCompressed": str,
+                         "ingredients": List[Ingredient],
+                         "ingredientsCount": int,
+                         "description": str,
+                         "estimatedTime": int,
+                         "difficulty": Difficulty,
+                         "relatedLinks": Union[str, List[str]]}
 
 def compressName(name: str) -> str:
     """
@@ -70,7 +94,7 @@ class Recipe:
         self.description = description if isinstance(description, str) else "\t{}\n".format('\n\t'.join(description))
         
         # Assign optional keyword arguments
-        keywords = {"estimatedTime": int, "difficulty": Difficulty, "relatedLinks": Union[str, List[str]]}
+        keywords = RECIPE_INPUT_OPTIONAL
         for key in keywords.keys():
             if key in kwargs.keys():
                 if checkType(kwargs[key], keywords[key]):
@@ -108,7 +132,7 @@ class Recipe:
 
         # Insert values of attributes included below into the dictionary
         jsonData = {}
-        includedAttributes = ["nameFull", "ingredients", "description", "estimatedTime", "difficulty", "relatedLinks"]
+        includedAttributes = RECIPE_ATTRIBUTES_PRIMARY.keys
         for attribute in includedAttributes:
             if getattr(self, attribute):
                 jsonData[attribute] = getattr(self, attribute)
@@ -150,6 +174,8 @@ class Recipe:
     def __repr__(self) -> str:
         return f"{type(self).__name__}({', '.join([attr + ': ' + repr(getattr(self, attr)) for attr in self.__dir__])})"
     
+    def __eq__(self, cls: object) -> bool:
+        return all([getattr(self, primaryAttribute) == getattr(cls, primaryAttribute) for primaryAttribute in RECIPE_ATTRIBUTES_PRIMARY.keys])
+    
     def __dir__(self) -> Iterable[str]:
-        return ["nameFull", "nameCompressed", "ingredients", "ingredientsCount", "description",
-                "estimatedTime", "difficulty", "relatedLinks"]
+        return RECIPE_ATTRIBUTES_ALL.keys

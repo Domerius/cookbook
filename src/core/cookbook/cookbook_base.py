@@ -9,6 +9,6 @@ class CookbookBase(ABC):
     An abstract class containing pieces of the Cookbook class necessary for the remaining parts of the class.
     """
 
-    def __init__(self, recipes: List[Recipe]) -> None:
-        super(CookbookBase, self).__init__(recipes)
-        self._recipes = recipes
+    def __init__(self) -> None:
+        super(CookbookBase, self).__init__()
+        self._recipes : List[Recipe]
