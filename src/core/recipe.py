@@ -72,7 +72,10 @@ class Recipe:
             name (str): Name of the recipe
             ingredients (list[Ingredient]): List of needed ingeredients
             description (str): Description mainly containing instructions for making the recipe
-            **kwargs: Accepts all optional class parameters
+            **kwargs: Accepts all optional class parameters, namely
+                - difficulty (int)
+                - estimatedTime (Difficulty)
+                - relatedLinks (Union[str, List[str]])
         """
 
         # Check if argument types are correct and make sense

@@ -135,7 +135,7 @@ def test_init_with_kwargs_error(name: str,
     assert e_info.type is TypeError
 
 # Tests of __str__
-def test_str_long(name: str,
+def test_str_short(name: str,
                   ingredients: Ingredient,
                   description: List[str],
                   estimated_time: int,
@@ -221,3 +221,47 @@ def test_str_long(name: str,
                     estimatedTime=estimated_time, difficulty=difficulty, relatedLinks=related_links)
     
     assert str(recipe) == expected_string_full
+
+def eq_test(name: str,
+            ingredients: Ingredient,
+            description: List[str],
+            estimated_time: int,
+            difficulty: Difficulty,
+            related_links: str):
+    
+    recipe_1 = Recipe(name, ingredients, description,
+                      estimated_time=estimated_time, difficulty=difficulty, related_links=related_links)
+    recipe_2 = recipe_1
+    assert recipe_1 == recipe_2
+
+def get_json_test(name: str,
+                  ingredients: Ingredient,
+                  description: List[str],
+                  estimated_time: int,
+                  difficulty: Difficulty,
+                  related_links: str):
+    
+    json_data = {}
+    json_data["nameFull"] = name
+    json_data["ingredients"] = ingredients
+    json_data["description"] = "\t{}\n".format('\n\t'.join(description))
+    json_data["estimatedTime"] = estimated_time
+    json_data["difficulty"] = difficulty
+    json_data["relatedLinks"] = related_links
+
+    recipe = Recipe(name, ingredients, description,
+                    estimated_time=estimated_time, difficulty=difficulty, related_links=related_links)
+    
+    assert recipe.getJSON() == json_data
+
+def from_json_test(name: str,
+              ingredients: Ingredient,
+              description: List[str],
+              estimated_time: int,
+              difficulty: Difficulty,
+              related_links: str):
+    
+    expected_recipe = Recipe(name, ingredients, description,
+                             estimated_time=estimated_time, difficulty=difficulty, related_links=related_links)
+    json_data = expected_recipe.getJSON()
+    assert Recipe.fromJSON(json_data) == expected_recipe

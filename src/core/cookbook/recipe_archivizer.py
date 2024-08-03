@@ -58,8 +58,7 @@ class RecipeArchivizer(CookbookBase):
     def _getFileNames(self) -> List[str]:
         """ Return a list of all files in the 'recipes' directory. """
 
-        # It may be usefull to check whether all files are .json just in case
-        return os.listdir(self.__path)
+        return [file if file.endswith(".json") else None for file in os.listdir(self.__path)]
 
     def _readFile(self, fileName: str) -> Recipe:
         """ Try to read a file - if not succesful raise an exception. """

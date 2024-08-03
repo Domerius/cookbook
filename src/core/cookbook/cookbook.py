@@ -15,7 +15,7 @@ class Cookbook(RecipeArchivizer, RecipeOrganizer):
 
     def __init__(self):
         super(Cookbook, self).__init__()
-        self.loadAllRecipes()
+        self.__loadAllRecipes()
     
     def __findRecipeByName(self, name: str) -> int:
         """ Find a recipe of given name and return its index. """
@@ -84,11 +84,12 @@ class Cookbook(RecipeArchivizer, RecipeOrganizer):
             return True
         return False
 
-    def loadAllRecipes(self) -> bool:
+    def __loadAllRecipes(self) -> bool:
         """ Load each recipe from file. Called on initialization of the Cookbook. """
         # Iterate through every file associated with a recipe and append them to the Cook
         for file in super()._getFileNames():
-            self._recipes.append(super()._readFile(file))
+            if file:
+                self._recipes.append(super()._readFile(file))
         return True
     
     # Magic methods
