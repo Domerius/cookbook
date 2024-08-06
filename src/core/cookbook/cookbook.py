@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Union
 
 from ..recipe import Recipe
 
@@ -40,17 +40,17 @@ class Cookbook(RecipeArchivizer, RecipeOrganizer):
     
     # Filtering methods - for filtering by more than 1 criterium call each method and pick a common part from each mask
     # Keep products of each method separatelly so you can reverse filtering
-    def filterRecipesByNamePhrases(self, keys: List[str], mutualExclusion: bool = False) ->  List[int]:
-        return super()._filterRecipes("nameFull", keys, mutualExclusion)
+    def filterRecipesByNamePhrases(self, keys: Union[str,List[str]], mutualExclusion: bool = False) ->  List[int]:
+        return super()._filterRecipesByKeys("nameFull", keys, mutualExclusion)
     
-    def filterRecipesByIngredients(self, keys: List[str], mutualExclusion: bool = False) ->  List[int]:
-        return super()._filterRecipes("ingredients", keys, mutualExclusion)
+    def filterRecipesByIngredients(self, keys: Union[str,List[str]], mutualExclusion: bool = False) ->  List[int]:
+        return super()._filterRecipesByKeys("ingredients", keys, mutualExclusion)
 
-    def filterRecipesByDifficulty(self, keys: List[str], mutualExclusion: bool = False) ->  List[int]:
-        return super()._filterRecipes("difficulty", keys, mutualExclusion)
+    def filterRecipesByDifficulty(self, keys: Union[str,List[str]], mutualExclusion: bool = False) ->  List[int]:
+        return super()._filterRecipesByKeys("difficulty", keys, mutualExclusion)
 
-    def filterRecipesByEstimatedTime(self, keys: List[str], mutualExclusion: bool = False) ->  List[int]:
-        return super()._filterRecipes("estimatedTime", keys, mutualExclusion)
+    def filterRecipesByEstimatedTime(self, threshold: int) ->  List[int]:
+        return super()._filterRecipesByLimit(self, "estimatedTime", threshold)
     
     # File management methods
     def addRecipe(self, recipe: Recipe) -> bool:

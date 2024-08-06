@@ -1,4 +1,5 @@
 from typing import List, Union, Any, Container, TypeVar, get_origin
+from numbers import Number
 import numpy as np
 
 from ..recipe import Recipe
@@ -35,7 +36,28 @@ class RecipeOrganizer(CookbookBase):
         order = order[order[:,1].argsort(kind='stable')]
         # Apply the new order to the whole list of recipes
         self._recipes[:] = [self._recipes[i] for i in order]
+
+    def _filterRecipesByLimit(self, attribute: str, threshold: Number, invert: bool) -> List[int]:
+
+        # Check if the attribute of the Recipe class is chosen correctly
+        if attribute not in Recipe.__dir__:
+            raise TypeError(f"The Recipe class doesn't have a field of type {attribute}. " \
+                            f"Should be one of the following: {Recipe.__dir__}")
+        
+        # Create a list for filtering to base on by extracting the value from beneath the chosen attribute
+        # We don't need to worry about None values - they will be ignored automatically as they won't match any threshold
+        filteringBase = [getattr(recipe, attribute) for recipe in self._recipes]
     
+        # Check if the threshold is a single item
+        if get_origin(threshold) is Container and len(threshold) > 1:
+            raise TypeError(f"Input threshold has multiple values: {threshold}.")
+        
+        # A function that the filtering bases on
+        filteringFunc = lambda x: x <= threshold if invert else x >= threshold
+
+        # Apply the filtering function and return indices of matching elements
+        return [idx for idx, item in enumerate(filteringBase) if filteringFunc(item)]
+        
     def __filterRecipesByMultipleKeys(self, attribute: str, keys: List[Any], mutualExclusion: bool) -> List[int]:
         """
         Filters the filtering_base based on the presence of keys.
@@ -123,7 +145,7 @@ class RecipeOrganizer(CookbookBase):
         # Apply the filtering function and return indices of matching elements
         return [idx for idx, item in enumerate(filteringBase) if filteringFunc(item)]
 
-    def _filterRecipes(self, attribute: str, keys: Union[T, List[T]], mutualExclusion: bool) -> List[int]:
+    def _filterRecipesByKeys(self, attribute: str, keys: Union[T, List[T]], mutualExclusion: bool) -> List[int]:
         """
         Filters the filtering_base based on the presence of a single key.
 
