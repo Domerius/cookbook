@@ -74,8 +74,8 @@ def test_countable(name_countable: str,
     """
 
     ingredient = Ingredient(name_countable, measure_countable)
-    assert ingredient.unit == "pcs."
-    assert str(ingredient) == "jajka: 5 pcs."
+    assert ingredient.unit == "pcs"
+    assert str(ingredient) == "jajka: 5 pcs"
 
 def test_init_error(name_lowercase: str,
                     measure_uncountable: int,

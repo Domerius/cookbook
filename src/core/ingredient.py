@@ -37,7 +37,7 @@ class Ingredient:
         # Assign values
         self.name = name.lower()
         self.measure = measure
-        self.unit = "pcs."  if  unit == ''  else  unit.lower()
+        self.unit = "pcs"  if  unit == ''  else  unit.lower()
     
     def __str__(self):
         """ Returns user-oriented representation of this class. """
